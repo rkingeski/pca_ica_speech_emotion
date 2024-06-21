@@ -1,5 +1,3 @@
-Certainly! Here is an improved version of your README:
-
 # PCA and ICA Fusion Applied in Speech Emotion Recognition (SER)
 
 This repository demonstrates the application of Principal Component Analysis (PCA) and Independent Component Analysis (ICA) in Speech Emotion Recognition (SER).
