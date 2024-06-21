@@ -6,8 +6,8 @@ This repository demonstrates the application of Principal Component Analysis (PC
 
 To test these scripts, you will need to download the following datasets:
 
-1. **SAVEE** 
-2. **RAVDESS**
+1. **SAVEE** - Can be downloaded in https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee
+2. **RAVDESS** Can be downloaded in https://www.kaggle.com/datasets/uwrfkaggler/ravdess-emotional-speech-audio
 3. **Berlin EmoDB** - Can be downloaded using [audb](https://github.com/audeering/emodb?tab=readme-ov-file).
 
 ## How to Use
