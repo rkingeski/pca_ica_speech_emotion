@@ -20,7 +20,7 @@ from sklearn import preprocessing
 from scipy import stats
 
 # Define the Excel filename
-excel_filename = r'berlim_pca_ica.xlsx'
+excel_filename = r'G:\Meu Drive\features_py\emodb scripts\berlim_pca_ica.xlsx'
 
 # Read the Excel file
 with pd.ExcelFile(excel_filename) as xls:
@@ -54,7 +54,7 @@ ica_not_norm = []
 #########################
 
 # Define the Excel filename
-excel_filename = r'berlim_pca_ica_kw.xlsx'
+excel_filename = r'G:\Meu Drive\features_py\emodb scripts\berlim_pca_ica_kw.xlsx'
 
 # Read the Excel file
 with pd.ExcelFile(excel_filename) as xls:
@@ -89,8 +89,182 @@ ica_not_norm_kw = []
 
 #########################
 
+
+
 #define the SVM config for model
 clf = svm.SVC(kernel='rbf', C=100)
+
+'''
+scaler = preprocessing.StandardScaler().fit(pca_all)
+pca_all = scaler.fit_transform(pca_all)
+scaler = preprocessing.StandardScaler().fit(pca_normal)
+pca_normal = scaler.fit_transform(pca_normal)
+scaler = preprocessing.StandardScaler().fit(pca_not_normal)
+pca_not_normal = scaler.fit_transform(pca_not_normal)
+
+scaler = preprocessing.StandardScaler().fit(pca_all_kw)
+pca_all_kw = scaler.fit_transform(pca_all_kw)
+scaler = preprocessing.StandardScaler().fit(pca_normal_kw)
+pca_normal_kw = scaler.fit_transform(pca_normal_kw)
+scaler = preprocessing.StandardScaler().fit(pca_not_normal_kw)
+pca_not_normal_kw = scaler.fit_transform(pca_not_normal_kw)
+'''
+
+
+
+#########################
+
+'''
+accuracy_pca_all = []
+
+accuracy_pca_norm_all = []
+
+accuracy_pca_not_norm_all = []
+
+
+for i in range(0, 101, 10):
+    
+    if i == 0:
+    
+        scores_pca_all = cross_val_score(clf, X=pca_all[:,0:1], y=emotions, cv=10)
+       
+        scores_pca_norm_all = cross_val_score(clf, X=pca_normal[:,0:1], y=emotions, cv=10)
+        
+        scores_pca_not_norm_all = cross_val_score(clf, X=pca_not_normal[:,0:1], y=emotions, cv=10)
+       
+        accuracy_pca_all.append(scores_pca_all)
+        
+        accuracy_pca_norm_all.append(scores_pca_norm_all)
+        
+        accuracy_pca_not_norm_all.append(scores_pca_not_norm_all)
+        
+    else:
+        
+        scores_pca_all = cross_val_score(clf, X=pca_all[:,0:i-1], y=emotions, cv=10)
+       
+        scores_pca_norm_all = cross_val_score(clf, X=pca_normal[:,0:i-1], y=emotions, cv=10)
+        
+        scores_pca_not_norm_all = cross_val_score(clf, X=pca_not_normal[:,0:i-1], y=emotions, cv=10)
+       
+        accuracy_pca_all.append(scores_pca_all)
+        
+        accuracy_pca_norm_all.append(scores_pca_norm_all)
+        
+        accuracy_pca_not_norm_all.append(scores_pca_not_norm_all)
+        
+
+
+#plot the mean accuracy versus number of principal components 
+    
+mean_accuracy_pca_all = np.array([np.mean(lines) for lines in accuracy_pca_all])
+
+mean_accuracy_pca_norm_all = np.array([np.mean(lines) for lines in accuracy_pca_norm_all])
+
+mean_accuracy_pca_not_norm_all = np.array([np.mean(lines) for lines in accuracy_pca_not_norm_all])
+
+number_pca = [2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+#plt.figure(figsize=(14, 8))
+sns.set(rc={'axes.facecolor':'white', 'figure.facecolor':'white'})
+
+plt.figure(facecolor='white')
+plt.grid(which='major', linestyle='--', linewidth=0.5, color='gray')
+plt.xticks(number_pca)
+
+plt.plot(number_pca, mean_accuracy_pca_all, 'o-', label='Mean Accu All Features', markersize=8)
+plt.plot(number_pca, mean_accuracy_pca_norm_all, '^-', label='Mean Accu Normal Features', markersize=8)
+plt.plot(number_pca, mean_accuracy_pca_not_norm_all, 'v-', label='Mean Accu Non-Normal Features', markersize=8)
+
+
+plt.xlabel('Number of Components')
+plt.ylabel('Accuracy of Model')
+plt.title('EmoDB PCA')
+
+
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+plt.rcParams['savefig.dpi']=600
+plt.savefig('Emodb_PCA.png', format='png')
+
+
+
+
+#########################
+
+accuracy_ica_all = []
+
+accuracy_ica_norm_all = []
+
+accuracy_ica_not_norm_all = []
+
+
+for i in range(len(ica[:])):
+    
+    scores_ica_all = cross_val_score(clf, X=ica[i], y=emotions, cv=10)
+   
+    scores_ica_norm_all = cross_val_score(clf, X=ica_norm[i], y=emotions, cv=10)
+    
+    scores_ica_not_norm_all = cross_val_score(clf, X=ica_not_norm[i], y=emotions, cv=10)
+   
+    accuracy_ica_all.append(scores_ica_all)
+    
+    accuracy_ica_norm_all.append(scores_ica_norm_all)
+    
+    accuracy_ica_not_norm_all.append(scores_ica_not_norm_all)
+    
+    
+    print(i)
+
+
+#plot the mean accuracy versus number of independent components 
+    
+mean_accuracy_ica_all = np.array([np.mean(lines) for lines in accuracy_ica_all])
+
+std_accuracy_ica_all = np.array([np.std(lines) for lines in accuracy_ica_all])
+
+mean_accuracy_ica_norm_all = np.array([np.mean(lines) for lines in accuracy_ica_norm_all])
+
+std_accuracy_ica_norm_all = np.array([np.std(lines) for lines in accuracy_ica_norm_all])
+
+mean_accuracy_ica_not_norm_all = np.array([np.mean(lines) for lines in accuracy_ica_not_norm_all])
+
+std_accuracy_ica_not_norm_all = np.array([np.std(lines) for lines in accuracy_ica_not_norm_all])
+
+
+number_ica = [2, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+
+#plt.figure(figsize=(14, 8))
+sns.set(rc={'axes.facecolor':'white', 'figure.facecolor':'white'})
+
+plt.figure(facecolor='white')
+plt.grid(which='major', linestyle='--', linewidth=0.5, color='gray')
+plt.xticks(number_ica)
+
+plt.plot(number_ica, mean_accuracy_ica_all, 'o-', label='Mean Accu All Features', markersize=8)
+plt.plot(number_ica, mean_accuracy_ica_norm_all, '^-', label='Mean Accu Normal Features', markersize=8)
+plt.plot(number_ica, mean_accuracy_ica_not_norm_all, 'v-', label='Mean Accu Non-Normal Features', markersize=8)
+
+
+plt.xlabel('Number of Components')
+plt.ylabel('Accuracy of Model')
+plt.title('EmoDB ICA')
+
+
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+plt.rcParams['savefig.dpi']=600
+plt.savefig('Emodb_ICA.png', format='png')
+
+'''
+####################
+
 
 
 ###########################################
@@ -153,23 +327,19 @@ def matrixacc(pca,ica, class_label, clf):
     
     return pca_ica_matrix
 
-################################################################################
-#Matrix of accuracy for the heatmap
-################################################################################
+clf = svm.SVC(kernel='rbf', C=100)
 
 #with distribuition sep
-pca_ica_matrix_a = matrixacc(pca_normal, ica, emotions, clf)
+#pca_ica_matrix_a = matrixacc(pca_normal, ica, emotions, clf)
 
 #without distribuition sep
-pca_ica_matrix_all = matrixacc(pca_all, ica, emotions, clf)
+#pca_ica_matrix_all = matrixacc(pca_all, ica, emotions, clf)
 
 
-#################################################################################
-#Heatmap plots
 #################################################################################
 
 #without KW
-
+'''
 plotheat(pca_ica_matrix_a, 9, 'Heatmap_distribuition_separated_EmoDB.png', True, 0.5)
 
 plotheat(pca_ica_matrix_all, 9, 'Heatmap_distribuition_not_separated_EmoDB.png', True, 0.5)
@@ -198,6 +368,36 @@ pca_ica_matrix_a_kw = matrixacc(pca_normal_kw, ica_kw, emotions, clf)
 # kw without distribuition sep
 pca_ica_matrix_all_kw = matrixacc(pca_all_kw, ica_kw, emotions, clf)
 
+#################################################################################
+
+#with KW
+
+plotheat(pca_ica_matrix_a_kw, 9, 'Heatmap_distribuition_separated_EmoDB_kw.png', True, 0.5)
+
+plotheat(pca_ica_matrix_all_kw, 9, 'Heatmap_distribuition_not_separated_EmoDB_kw.png', True, 0.5)
+
+
+
+plotheat(pca_ica_matrix_a_kw, 9, 'Heatmap_distribuition_separated2_EmoDB_kw.png' , False, 0)
+
+plotheat(pca_ica_matrix_all_kw, 9, 'Heatmap_distribuition_not_separated2_EmoDB_kw.png' , False, 0)
+
+
+#####################
+
+#ica not normal test
+
+# kw with distribuition sep
+pca_ica_matrix_a_kw_t = matrixacc(pca_normal_kw, ica_not_norm_kw, emotions, clf)
+
+
+
+plotheat(pca_ica_matrix_a_kw_t, 9, 'Heatmap_distribuition_separated_test_EmoDB_kw.png', True, 0.5)
+
+
+
+plotheat(pca_ica_matrix_a_kw_t, 9, 'Heatmap_distribuition_separated2_test_EmoDB_kw.png' , False, 0)
+
 
 
 
@@ -218,14 +418,14 @@ plotheat(pca_ica_matrix_all_kw, 9, 'Heatmap_distribuition_not_separated2_EmoDB_k
 
 
 
+'''
+
 ################################################################
 
-#boxplot
+#barplot
 
 #################################################################
 
-
-# funtion to extract the metrics
 def results(ica_feats, pca_feats, labels, n_folds):
     
 
@@ -248,6 +448,7 @@ def results(ica_feats, pca_feats, labels, n_folds):
     return conf_mat, metrics_df, pred, prec, recall, f1, acc
 
 
+# 
 
 conf_mat_sep, metrics_sep, pred_sep, prec_sep, recall_sep, f1_sep, acc_sep =  results(ica[10], pca_normal[:,0:70], emotions, 10)
 
@@ -261,6 +462,8 @@ conf_mat_sep_kw, metrics_sep_kw, pred_sep_kw, prec_sep_kw, recall_sep_kw, f1_sep
 
 
 conf_mat_not_sep_kw, metrics_not_sep_kw, pred_not_sep_kw, prec_not_sep_kw, recall_not_sep_kw, f1_not_sep_kw, acc_not_sep_kw =  results(ica_kw[10], pca_all_kw[:,0:70], emotions, 10)
+
+
 
 
 
@@ -317,13 +520,13 @@ for i in range(0,16):
 labels2 = ['with dist', 'without dist', 'with dist - kw', 'without dist - kw']
 
 def repeatl(lab):
-    if not lab:  
-        return []  
+    if not lab:  # Check if the list is empty
+        return []  # Return an empty list if the input list is empty
     else:
-        first = lab[0]  
-        repeat = [first] * 4  
-        rest = lab[1:]  
-        return repeat + repeatl(rest) 
+        first = lab[0]  # Get the first element of the list
+        repeat = [first] * 4  # Repeat the first element four times
+        rest = lab[1:]  # Get the rest of the elements
+        return repeat + repeatl(rest)  # Concatenate the repeated and original elements
 
 labels_group = repeatl(labels2)
 
@@ -333,11 +536,13 @@ meanv = pd.DataFrame(mean_values.values)
 results_plot = pd.concat([pd.DataFrame(mean_values.values),pd.DataFrame(confidvalue),pd.DataFrame(labels * 4),pd.DataFrame(labels_group)],axis=1)
 results_plot.columns = ['mean','confidence95','metric','group']
 
+#ax = sns.barplot(data = results_plot, hue="group", y="mean", x="metric")
+
 
 
 #########################################################
 # BOXPLOT
-#########################################################
+##########################
 
 
 final_test = final_results.transpose()*100
@@ -374,9 +579,10 @@ plt.xlabel('Metrics')
 plt.ylabel('Accuracy(%)')
 #plt.title('Box Plot of Accuracy by Metric and Group')
 plt.grid(axis='y', linestyle='--', color='grey', linewidth=0.5)
-plt.ylim(0, 100) 
-plt.legend(title='Groups')
-plt.yticks(np.arange(0,100, 10))
+plt.ylim(60, 100) 
+#plt.legend(title='Groups')
+plt.legend(title='Groups', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.yticks(np.arange(60,101, 2.5))
 #plt.box(on=True)
 plt.tight_layout()
 
@@ -395,11 +601,81 @@ plt.show()
 plt.rcParams['savefig.dpi']=600
 plt.savefig('Emodb_i100_p70.png', format='png')
 
+'''
+barWidth = 0.15
 
 
-###############################
-# PLOT CONFUSION MATRIX
-###############################
+
+
+
+bars1 = results_plot.loc[results_plot['group'] == 'without dist', 'mean'].tolist()
+
+bars2 = results_plot.loc[results_plot['group'] == 'with dist', 'mean'].tolist()
+
+bars3 = results_plot.loc[results_plot['group'] == 'without dist - kw', 'mean'].tolist()
+
+bars4 = results_plot.loc[results_plot['group'] == 'with dist - kw', 'mean'].tolist()
+
+yerr1 = results_plot.loc[results_plot['group'] == 'without dist', 'confidence95'].tolist()
+
+yerr2 = results_plot.loc[results_plot['group'] == 'with dist', 'confidence95'].tolist()
+
+yerr3 = results_plot.loc[results_plot['group'] == 'without dist - kw', 'confidence95'].tolist()
+
+yerr4 = results_plot.loc[results_plot['group'] == 'with dist - kw', 'confidence95'].tolist()
+
+
+bars1 = list(map(lambda x: 100*x, bars1))
+
+bars2 = list(map(lambda x: 100*x, bars2))
+
+bars3 = list(map(lambda x: 100*x, bars3))
+
+bars4 = list(map(lambda x: 100*x, bars4))
+
+yerr1 = list(map(lambda x: 100*x, yerr1))
+
+yerr2 = list(map(lambda x: 100*x, yerr2))
+
+yerr3 = list(map(lambda x: 100*x, yerr3))
+
+yerr4 = list(map(lambda x: 100*x, yerr4))
+
+r1 = np.arange(len(bars1))
+r2 = [x + 0.03 + barWidth for x in r1]
+r3 = [x + 0.03 + barWidth for x in r2]
+r4 = [x + 0.03 + barWidth for x in r3]
+
+
+plt.figure()
+#sns.set(rc={'axes.facecolor':'white', 'figure.facecolor':'white'})
+
+# Create blue bars
+plt.bar(r1, bars1, width = barWidth, color = '#AED6F1', edgecolor = 'black', yerr=yerr1, capsize=4, label='Without distribuition separation')
+ 
+# Create cyan bars
+plt.bar(r2, bars2, width = barWidth, color = '#ABEBC6', edgecolor = 'black', yerr=yerr2, capsize=4, label='With distribuition separation')
+
+plt.bar(r3, bars3, width = barWidth, color = '#F9E79F', edgecolor = 'black', yerr=yerr3, capsize=4, label='Without distribuition separation - KW')
+
+plt.bar(r4, bars4, width = barWidth, color = '#F5B7B1', edgecolor = 'black', yerr=yerr4, capsize=4, label='With distribuition separation - KW')
+
+# general layout
+plt.xticks([r + barWidth for r in range(len(bars1))], labels)
+plt.xlabel('Metric')
+plt.ylabel('Percentage %')
+plt.ylim(70, 94) 
+plt.grid(True, linestyle='--', color='gray', linewidth=0.6)
+plt.legend()
+plt.tight_layout()
+plt.rcParams['savefig.dpi']=500
+plt.savefig('emodb_100_70.png', format='png')
+
+
+
+'''
+
+#######
 
 cm = 100*conf_mat_sep_kw.astype('float') / conf_mat_sep_kw.sum(axis=1)[:, np.newaxis]
 
@@ -428,3 +704,18 @@ plt.show()
 plt.tight_layout()
 plt.rcParams['savefig.dpi']=600
 plt.savefig('Emodb cm100_70_not_sep_kw.png', format='png')
+
+
+'''
+# Calcular a média e o desvio padrão de cada grupo
+mean1 = np.mean(acc_sep_kw)
+mean2 = np.mean(acc_not_sep)
+std1 = np.std(acc_sep_kw, ddof=1)
+std2 = np.std(acc_not_sep, ddof=1)
+
+# Calcular o tamanho do efeito (d de Cohen)
+pooled_std = np.sqrt((std1**2 + std2**2) / 2)
+effect_size = (mean1 - mean2) / pooled_std
+
+print(f'Tamanho do Efeito (d de Cohen): {effect_size:.2f}')
+'''
