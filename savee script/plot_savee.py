@@ -246,20 +246,20 @@ def results(ica_feats, pca_feats, labels, n_folds):
     return conf_mat, metrics_df, pred, prec, recall, f1, acc
 
 
-# 100 ICA 50 PCA
+# 60 ICA 49 PCA
 
-conf_mat_sep, metrics_sep, pred_sep, prec_sep, recall_sep, f1_sep, acc_sep =  results(100*ica[6], pca_normal[:,0:59], emotions, 10)
-
-
-conf_mat_not_sep, metrics_sep, pred_not_sep, prec_not_sep, recall_not_sep, f1_not_sep, acc_not_sep =  results(100*ica[6], pca_all[:,0:59], emotions, 10)
+conf_mat_sep, metrics_sep, pred_sep, prec_sep, recall_sep, f1_sep, acc_sep =  results(ica[6], pca_normal[:,0:49], emotions, 10)
 
 
+conf_mat_not_sep, metrics_sep, pred_not_sep, prec_not_sep, recall_not_sep, f1_not_sep, acc_not_sep =  results(ica[6], pca_all[:,0:49], emotions, 10)
 
 
-conf_mat_sep_kw, metrics_sep_kw, pred_sep_kw, prec_sep_kw, recall_sep_kw, f1_sep_kw, acc_sep_kw =  results(100*ica_kw[6], pca_normal_kw[:,0:59], emotions, 10)
 
 
-conf_mat_not_sep_kw, metrics_sep_kw, pred_not_sep_kw, prec_not_sep_kw, recall_not_sep_kw, f1_not_sep_kw, acc_not_sep_kw =  results(100*ica_kw[6], pca_all_kw[:,0:59], emotions, 10)
+conf_mat_sep_kw, metrics_sep_kw, pred_sep_kw, prec_sep_kw, recall_sep_kw, f1_sep_kw, acc_sep_kw =  results(ica_kw[6], pca_normal_kw[:,0:49], emotions, 10)
+
+
+conf_mat_not_sep_kw, metrics_sep_kw, pred_not_sep_kw, prec_not_sep_kw, recall_not_sep_kw, f1_not_sep_kw, acc_not_sep_kw =  results(ica_kw[6], pca_all_kw[:,0:50], emotions, 10)
 
 
 
@@ -335,6 +335,13 @@ meanv = pd.DataFrame(mean_values.values)
 results_plot = pd.concat([pd.DataFrame(mean_values.values),pd.DataFrame(confidvalue),pd.DataFrame(labels * 4),pd.DataFrame(labels_group)],axis=1)
 results_plot.columns = ['mean','confidence95','metric','group']
 
+
+
+#########################################################
+# BOXPLOT
+##########################
+
+
 final_test = final_results.transpose()*100
 final_test = final_test.reset_index()
 results_test = pd.concat([final_test,pd.DataFrame(labels * 4,columns=['Metric']),pd.DataFrame(labels_group,columns=['Groups'])],axis=1)
@@ -369,9 +376,10 @@ plt.xlabel('Metrics')
 plt.ylabel('Accuracy(%)')
 #plt.title('Box Plot of Accuracy by Metric and Group')
 plt.grid(axis='y', linestyle='--', color='grey', linewidth=0.5)
-plt.ylim(0, 100) 
-plt.legend(title='Groups')
-plt.yticks(np.arange(0,100, 10))
+plt.ylim(45.0, 95) 
+#plt.legend(title='Groups')
+plt.legend(title='Groups', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.yticks(np.arange(45.0,96, 2.5))
 #plt.box(on=True)
 plt.tight_layout()
 
