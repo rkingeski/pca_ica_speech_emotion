@@ -387,9 +387,9 @@ plt.xlabel('Metrics')
 plt.ylabel('Accuracy(%)')
 #plt.title('Box Plot of Accuracy by Metric and Group')
 plt.grid(axis='y', linestyle='--', color='grey', linewidth=0.5)
-plt.ylim(0, 100) 
-plt.legend(title='Groups')
-plt.yticks(np.arange(0,100, 10))
+plt.ylim(35, 80) 
+plt.legend(title='Groups', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.yticks(np.arange(35,81, 2.5))
 #plt.box(on=True)
 plt.tight_layout()
 
@@ -406,7 +406,7 @@ plt.gca().spines['left'].set_color('grey')  # Left spine color
 
 plt.show()
 plt.rcParams['savefig.dpi']=600
-plt.savefig('Emodb_i100_p70.png', format='png')
+plt.savefig('Ravdess_i100_p50.png', format='png')
 
 
 
