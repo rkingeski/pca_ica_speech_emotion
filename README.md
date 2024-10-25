@@ -57,7 +57,11 @@ Feel free to reach out if you encounter any issues or have questions.
 
 
 ---
+## Citation
 
+If you find this repository useful for your research or work, please consider citing the associated article:
+
+> Kingeski, R.; Henning, E.; Paterno, A.S. Fusion of PCA and ICA in Statistical Subset Analysis for Speech Emotion Recognition. Sensors 2024, 24, 5704. https://doi.org/10.3390/s24175704
 
 
 ---
